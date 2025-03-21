@@ -8,12 +8,14 @@ This project demonstrates how to create and use a Model Context Protocol (MCP) s
 
 - Simple math operations (addition)
 - Dynamic greeting resource
-- Web crawling capability
+- Web crawling capability using the crawl4ai library
 
 ## Requirements
 
 - Python 3.8+
-- Required packages (listed in requirements.txt)
+- Required packages:
+  - mcp
+  - crawl4ai
 
 ## Installation
 
@@ -50,11 +52,13 @@ To run the MCP server directly:
 python first-mcp.py
 ```
 
+The server will start and wait for connections using the stdio transport method.
+
 ### Integrating with Cursor
 
 To use this MCP server with Cursor IDE:
 
-1. Create or edit the file `~/.cursor/mcp.json` with the following content:
+1. Create or edit the file `~/.cursor/mcp.json` (on Windows: `C:\Users\<username>\.cursor\mcp.json`) with the following content (alternatively, copy and edit the included `sample_mcp.json` file):
 
 ```json
 {
@@ -62,15 +66,18 @@ To use this MCP server with Cursor IDE:
     "fastmcp": {
       "command": "python",
       "args": [
-        "path/to/your/first-mcp.py"
+        "C:\\path\\to\\your\\first-mcp.py"
       ]
     }
   }
 }
 ```
 
-2. Replace `path/to/your/first-mcp.py` with the absolute path to your `first-mcp.py` file.
-3. Restart Cursor to load the MCP server.
+2. Replace the path with the absolute path to your `first-mcp.py` file.
+   - On Windows, use double backslashes: `C:\\Users\\username\\path\\to\\first-mcp.py`
+   - On macOS/Linux, use regular slashes: `/Users/username/path/to/first-mcp.py`
+
+3. Restart Cursor completely (including ending any background processes) to load the MCP server.
 
 ## Features
 
@@ -83,13 +90,48 @@ To use this MCP server with Cursor IDE:
 
 - **greeting://{name}**: Returns a personalized greeting for the provided name
 
+## Technical Details
+
+### Windows Binary Mode Fix
+
+This server includes a specific fix for Windows to ensure proper operation with stdio transport:
+
+```python
+# Set binary mode for stdin/stdout on Windows
+if os.name == 'nt':
+    import msvcrt
+    msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
+    msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+```
+
+This fix is necessary because Windows distinguishes between text and binary modes for file handling, which can cause issues with the stdio transport mechanism used by MCP.
+
 ## Troubleshooting
 
-If you encounter issues with the MCP server on Windows:
+If you encounter issues with the MCP server:
 
-- The server adds specific code to handle binary mode for stdin/stdout on Windows
-- Make sure you're using the correct absolute path in your configuration file
-- Some clients may require you to manually terminate and restart them to pick up configuration changes
+### Windows-Specific Issues
+
+- **"Failed to create client" or "Client closed" errors**:
+  - Make sure to use the binary mode fix included in the server
+  - Use the absolute path with double backslashes in the mcp.json configuration
+  - Try running the MCP server directly to see if it produces any error output
+  - Completely exit Cursor (including terminating any background processes via Task Manager) before restarting
+
+### General Issues
+
+- Verify that all required packages are installed (`pip list` to check)
+- Check that the absolute path in the configuration file is correct
+- Make sure the MCP server is running with the proper version of Python (same one where packages are installed)
+- Try reinstalling the MCP package: `pip uninstall mcp && pip install mcp`
+
+## Sample Files
+
+This repository includes:
+
+- `first-mcp.py`: The main MCP server implementation
+- `requirements.txt`: List of required Python packages
+- `sample_mcp.json`: Example configuration for Cursor integration
 
 ## License
 
