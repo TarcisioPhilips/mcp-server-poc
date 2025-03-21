@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "fastmcp": {
+      "command": "python",
+      "args": [
+        "<PATH_TO_MCP_SERVER>"
+      ]
+    }
+  }
+}
