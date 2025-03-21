@@ -6,18 +6,16 @@ A proof-of-concept implementation of a Model Context Protocol (MCP) server for e
 
 This project demonstrates how to create and use a Model Context Protocol (MCP) server that can provide custom tools and resources to AI assistants like Claude and others that support the MCP standard. The server includes:
 
-- Simple math operations (addition)
-- Dynamic greeting resource
-- Web crawling capability using the crawl4ai library
+- Documentation search tool for LangChain, LlamaIndex, and OpenAI
+- Web crawling capability
+- Integration with Google Search API
 
 ## Requirements
 
-- Python 3.8+
-- Required packages:
-  - mcp
-  - crawl4ai
+- Python 3.11
+- Required packages listed in requirements.txt
 
-## Installation
+## Installation and Setup
 
 1. Clone this repository:
 
@@ -29,10 +27,13 @@ cd mcp-server-poc
 2. Create and activate a virtual environment:
 
 ```bash
+# Create a Python 3.11 virtual environment
 python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On macOS/Linux
+
+# Activate on Windows
+ .\venv\Scripts\Activate.ps1
+
+# Activate on macOS/Linux
 source venv/bin/activate
 ```
 
@@ -42,43 +43,46 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Usage
+4. Set up environment variables:
 
-### Running the Server
+   Create a `.env` file in the root directory with the following:
 
-To run the MCP server directly:
+```
+SERPER_API_KEY=your_serper_api_key_here
+```
+
+## Running the Application
+
+To run the MCP server:
 
 ```bash
-python first-mcp.py
+python main.py
 ```
 
 The server will start and wait for connections using the stdio transport method.
 
-### Integrating with Cursor
+## Integrating with Cursor
 
 To use this MCP server with Cursor IDE:
 
-1. Create or edit the file `~/.cursor/mcp.json` (on Windows: `C:\Users\<username>\.cursor\mcp.json`) with the following content (alternatively, copy and edit the included `sample_mcp.json` file):
+1. Create or edit the file `~/.cursor/mcp.json` (on Windows: `C:\Users\<username>\.cursor\mcp.json`) with the following content:
 
 ```json
 {
     "mcpServers": {
         "mcp-server": {
-            "command": "uv", 
+            "command": "python", 
             "args": [
-                "--directory",
-                "/ABSOLUTE/PATH/TO/YOUR/mcp-server",
-                "run",
-                "main.py"
+                "ABSOLUTE/PATH/TO/main.py"
             ]
         }
     }
 }
 ```
 
-2. Replace the path with the absolute path to your `first-mcp.py` file.
-   - On Windows, use double backslashes: `C:\\Users\\username\\path\\to\\first-mcp.py`
-   - On macOS/Linux, use regular slashes: `/Users/username/path/to/first-mcp.py`
+2. Replace the path with the absolute path to your `main.py` file.
+   - On Windows, use double backslashes: `C:\\Users\\username\\path\\to\\main.py`
+   - On macOS/Linux, use regular slashes: `/Users/username/path/to/main.py`
 
 3. Restart Cursor completely (including ending any background processes) to load the MCP server.
 
@@ -86,12 +90,7 @@ To use this MCP server with Cursor IDE:
 
 ### Tools
 
-- **add(a, b)**: Adds two numbers and returns the result
-- **crawl_web(url)**: Crawls a given URL and returns the content as markdown
-
-### Resources
-
-- **greeting://{name}**: Returns a personalized greeting for the provided name
+- **get_docs(query, library)**: Searches the documentation for the specified library (langchain, llama-index, or openai) and returns relevant information
 
 ## Technical Details
 
@@ -125,16 +124,9 @@ If you encounter issues with the MCP server:
 
 - Verify that all required packages are installed (`pip list` to check)
 - Check that the absolute path in the configuration file is correct
-- Make sure the MCP server is running with the proper version of Python (same one where packages are installed)
+- Make sure the MCP server is running with the proper version of Python (3.11)
+- Verify that your `.env` file contains the required API key
 - Try reinstalling the MCP package: `pip uninstall mcp && pip install mcp`
-
-## Sample Files
-
-This repository includes:
-
-- `first-mcp.py`: The main MCP server implementation
-- `requirements.txt`: List of required Python packages
-- `sample_mcp.json`: Example configuration for Cursor integration
 
 ## License
 
