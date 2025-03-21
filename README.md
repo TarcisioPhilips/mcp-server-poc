@@ -62,14 +62,17 @@ To use this MCP server with Cursor IDE:
 
 ```json
 {
-  "mcpServers": {
-    "fastmcp": {
-      "command": "python",
-      "args": [
-        "C:\\path\\to\\your\\first-mcp.py"
-      ]
+    "mcpServers": {
+        "mcp-server": {
+            "command": "uv", 
+            "args": [
+                "--directory",
+                "/ABSOLUTE/PATH/TO/YOUR/mcp-server",
+                "run",
+                "main.py"
+            ]
+        }
     }
-  }
 }
 ```
 
