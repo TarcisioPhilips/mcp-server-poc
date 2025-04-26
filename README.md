@@ -27,27 +27,36 @@ cd mcp-server-poc
 2. Create and activate a virtual environment:
 
 ```bash
+# Init uv package manager 
+uv init
+
 # Create a Python 3.11 virtual environment
-python -m venv venv
+uv venv
 
 # Activate on Windows
- .\venv\Scripts\Activate.ps1
+ .venv\Scripts\activate
 
 # Activate on macOS/Linux
 source venv/bin/activate
 ```
 
-3. Install the required packages:
+3.Install the required packages:
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
-4. Set up environment variables:
+4. (Optional) Install MCP CLI tools if needed for development or alternative integrations:
+
+```bash
+uv add "mcp[cli]"
+```
+
+5.Set up environment variables:
 
    Create a `.env` file in the root directory with the following:
 
-```
+```bash
 SERPER_API_KEY=your_serper_api_key_here
 ```
 
@@ -56,7 +65,7 @@ SERPER_API_KEY=your_serper_api_key_here
 To run the MCP server:
 
 ```bash
-python main.py
+uv run mcp 
 ```
 
 The server will start and wait for connections using the stdio transport method.
