@@ -1,4 +1,4 @@
-# MCP Server POC
+# MCP Note Taker (POC)
 
 A proof-of-concept implementation of a Model Context Protocol (MCP) server for AI assistant note-taking, featuring custom tools and resources for managing notes.
 
