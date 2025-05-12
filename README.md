@@ -1,14 +1,16 @@
 # MCP Server POC
 
-A proof-of-concept implementation of a Model Context Protocol (MCP) server for enhancing AI assistant capabilities with custom tools and resources.
+A proof-of-concept implementation of a Model Context Protocol (MCP) server for AI assistant note-taking, featuring custom tools and resources for managing notes.
 
 ## Overview
 
-This project demonstrates how to create and use a Model Context Protocol (MCP) server that can provide custom tools and resources to AI assistants like Claude and others that support the MCP standard. The server includes:
+This project demonstrates how to create and use a Model Context Protocol (MCP) server that provides note-taking capabilities to AI assistants (such as Claude, Cursor, and others supporting MCP). The server includes:
 
-- Documentation search tool for LangChain, LlamaIndex, and OpenAI
-- Web crawling capability
-- Integration with Google Search API
+- A tool to add notes
+- A resource to fetch the latest note
+- A prompt to summarize all notes
+
+All notes are stored in a local `notes.txt` file in the project directory.
 
 ## Requirements
 
@@ -40,7 +42,7 @@ uv venv
 source venv/bin/activate
 ```
 
-3.Install the required packages:
+3. Install the required packages:
 
 ```bash
 uv pip install -r requirements.txt
@@ -52,20 +54,12 @@ uv pip install -r requirements.txt
 uv add "mcp[cli]"
 ```
 
-5.Set up environment variables:
-
-   Create a `.env` file in the root directory with the following:
-
-```bash
-SERPER_API_KEY=your_serper_api_key_here
-```
-
 ## Running the Application
 
 To run the MCP server:
 
 ```bash
-uv run mcp 
+uv run mcp
 ```
 
 The server will start and wait for connections using the stdio transport method.
@@ -99,43 +93,31 @@ To use this MCP server with Cursor IDE:
 
 ### Tools
 
-- **get_docs(query, library)**: Searches the documentation for the specified library (langchain, llama-index, or openai) and returns relevant information
+- **add_note(note: str)**: Adds a note to the `notes.txt` file and returns a confirmation message.
+
+### Resources
+
+- **notes://latest**: Returns the latest note from the `notes.txt` file, or a message if there are no notes yet.
+
+### Prompts
+
+- **note_summary_prompt()**: Generates a prompt asking the AI to summarize all current notes in `notes.txt`.
 
 ## Technical Details
 
+- All notes are stored in a plain text file named `notes.txt` in the project root. This file is created automatically if it does not exist.
+- The server uses the [Model Context Protocol](https://modelcontextprotocol.io/) SDK and the `mcp[cli]` dependency.
+
 ### Windows Binary Mode Fix
 
-This server includes a specific fix for Windows to ensure proper operation with stdio transport:
-
-```python
-# Set binary mode for stdin/stdout on Windows
-if os.name == 'nt':
-    import msvcrt
-    msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
-    msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
-```
-
-This fix is necessary because Windows distinguishes between text and binary modes for file handling, which can cause issues with the stdio transport mechanism used by MCP.
+If you use stdio transport on Windows, you may need to set binary mode for stdin/stdout. See the [MCP documentation](https://modelcontextprotocol.io/) for details.
 
 ## Troubleshooting
-
-If you encounter issues with the MCP server:
-
-### Windows-Specific Issues
-
-- **"Failed to create client" or "Client closed" errors**:
-  - Make sure to use the binary mode fix included in the server
-  - Use the absolute path with double backslashes in the mcp.json configuration
-  - Try running the MCP server directly to see if it produces any error output
-  - Completely exit Cursor (including terminating any background processes via Task Manager) before restarting
-
-### General Issues
 
 - Verify that all required packages are installed (`pip list` to check)
 - Check that the absolute path in the configuration file is correct
 - Make sure the MCP server is running with the proper version of Python (3.11)
-- Verify that your `.env` file contains the required API key
-- Try reinstalling the MCP package: `pip uninstall mcp && pip install mcp`
+- If you encounter issues, try running the MCP server directly to see any error output
 
 ## License
 
@@ -144,4 +126,3 @@ If you encounter issues with the MCP server:
 ## Acknowledgements
 
 - This project uses the [Model Context Protocol](https://modelcontextprotocol.io/) SDK
-- Web crawling functionality provided by [crawl4ai](https://github.com/crawler-project/crawl4ai)
